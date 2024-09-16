@@ -5,4 +5,4 @@ print(text)
 option=print(input("Enter y for ipconfig"))
 if(option=="y"or"Y"):
     subprocess.call("ipconfig")
-print("thank you")
+
