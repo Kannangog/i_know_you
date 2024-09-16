@@ -1,54 +1,144 @@
 import subprocess
-import pyfiglet
 import random
 import pyfiglet
-from art import text2art
-from termcolor import colored
-from colorama import Fore, Style
-from rich.console import Console
 
-# Initialize Colorama
-from colorama import init
-init(autoreset=True)
+# Text to display
+text = "Agentless Hacker"
 
-console = Console()
+# Get a list of all available fonts
+fonts = pyfiglet.FigletFont.getFonts()
 
-def pyfiglet_art():
-    """Generate text art using pyfiglet."""
-    fonts = pyfiglet.FigletFont.getFonts()
-    font = random.choice(fonts)
-    return pyfiglet.figlet_format("Agentless Hacker", font=font)
+# All ASCII art and text from the "AL Hacker" theme
+al_hacker_ascii_art = [
+    r'''
+         .                                         .
+      .
+      dBBBBBBb  dBBBP dBBBBBBP dBBBBBb  .                       o
+       '   dB'                     BBP
+    dB'dB'dB' dBBP     dBP     dBP BB
+   dB'dB'dB' dBP      dBP     dBP  BB
+  dB'dB'dB' dBBBBP   dBP     dBBBBBBB
 
-def art_library():
-    """Generate text art using the art library."""
-    return text2art("Agentless Hacker")
+                                   dBBBBBP  dBBBBBb  dBP    dBBBBP dBP dBBBBBBP
+          .                  .                  dB' dBP    dB'.BP
+                             |       dBP    dBBBB' dBP    dB'.BP dBP    dBP
+                           --o--    dBP    dBP    dBP    dB'.BP dBP    dBP
+                             |     dBBBBP dBP    dBBBBP dBBBBP dBP    dBP
 
-def termcolor_art():
-    """Generate colored text using termcolor."""
-    return colored('Agentless Hacker', 'green', 'on_red')
+                                                                    .
+                .
+        o                  To boldly go where no
+                            shell has gone before
+    ''',
+    r'''
+               .;lxO0KXXXK0Oxl:.
+           ,o0WMMMMMMMMMMMMMMMMMMKd,
+        'xNMMMMMMMMMMMMMMMMMMMMMMMMMWx,
+      :KMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMK:
+    .KMMMMMMMMMMMMMMMWNNNWMMMMMMMMMMMMMMMX,
+   lWMMMMMMMMMMMXd:..     ..;dKMMMMMMMMMMMMo
+  xMMMMMMMMMMWd.               .oNMMMMMMMMMMk
+ oMMMMMMMMMMx.                    dMMMMMMMMMMx
+.WMMMMMMMMM:                       :MMMMMMMMMM,
+xMMMMMMMMMo                         lMMMMMMMMMO
+NMMMMMMMMW                    ,cccccoMMMMMMMMMWlccccc;
+MMMMMMMMMX                     ;KMMMMMMMMMMMMMMMMMMX:
+NMMMMMMMMW.                      ;KMMMMMMMMMMMMMMX:
+xMMMMMMMMMd                        ,0MMMMMMMMMMK;
+.WMMMMMMMMMc                         'OMMMMMM0,
+ lMMMMMMMMMMk.                         .kMMO'
+  dMMMMMMMMMMWd'                         ..
+   cWMMMMMMMMMMMNxc'.                ##########
+    .0MMMMMMMMMMMMMMMMWc            #+#    #+#
+      ;0MMMMMMMMMMMMMMMo.          +:+
+        .dNMMMMMMMMMMMMo          +#++:++#+
+           'oOWMMMMMMMMo                +:+
+               .,cdkO0K;        :+:    :+:                                
+                                :::::::+:
+                      AL Hacker
 
-def colorama_art():
-    """Generate colored text using colorama."""
-    return f"{Fore.CYAN}Agentless Hacker{Style.RESET_ALL}"
 
-def rich_art():
-    """Generate styled text using rich."""
-    return "[bold magenta]Agentless Hacker[/bold magenta]"
+Call trans opt: received. 2-19-98 13:24:18 REC:Loc
 
-# List of functions for random selection
-art_functions = [pyfiglet_art, art_library, termcolor_art, colorama_art, rich_art]
+     Trace program: running
 
-# Select and execute a random text art function
-selected_art_function = random.choice(art_functions)
-art_output = selected_art_function()
+           wake up, Neo...
+        the matrix has you
+      follow the white rabbit.
 
-# Display the result
-if selected_art_function == rich_art:
-    console.print(art_output)
-else:
-    print(art_output)
+          knock, knock, Neo.
+    ''',
+    r'''
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMM                MMMMMMMMMM
+MMMN$                           vMMMM
+MMMNl  MMMMM             MMMMM  JMMMM
+MMMNl  MMMMMMMN       NMMMMMMM  JMMMM
+MMMNl  MMMMMMMMMNmmmNMMMMMMMMM  JMMMM
+MMMNI  MMMMMMMMMMMMMMMMMMMMMMM  jMMMM
+MMMNI  MMMMMMMMMMMMMMMMMMMMMMM  jMMMM
+MMMNI  MMMMM   MMMMMMM   MMMMM  jMMMM
+MMMNI  MMMMM   MMMMMMM   MMMMM  jMMMM
+MMMNI  MMMNM   MMMMMMM   MMMMM  jMMMM
+MMMNI  WMMMM   MMMMMMM   MMMM#  JMMMM
+MMMMR  ?MMNM             MMMMM .dMMMM
+MMMMNm `?MMM             MMMM` dMMMMM
+MMMMMMN  ?MM             MM?  NMMMMMN
+MMMMMMMMNe                 JMMMMMNMMM
+MMMMMMMMMMNm,            eMMMMMNMMNMM
+MMMMNNMNMMMMMNx        MMMMMMNMMNMMNM
+MMMMMMMMNMMNMMMMm+..+MMNMMNMNMMNMMNMM
+        https://AL-Hacker.com
+    ''',
+    r'''
+IIIIII    dTb.dTb        _.---._
+  II     4'  v  'B   .'"".'/|\`.""'.
+  II     6.     .P  :  .' / | \ `.  :
+  II     'T;. .;P'  '.'  /  |  \  `.'
+  II      'T; ;P'    `. /   |   \ .'
+IIIIII     'YvP'       `-.__|__.-'
 
-option=print(input("Enter y for ipconfig"))
+I love shells --egypt
+    ''',
+    r'''
+                                .,,.                  .                                                                                                                                                 
+                             .\$$$$$L..,,==aaccaacc%#s$b.       d8,    d8P                                                                                                                              
+                  d8P        #$$$$$$$$$$$$$$$$$$$$$$$$$$$b.    `BP  d888888p                                                                                                                            
+               d888888P      '7$$$$\""""''^^`` .7$$$|D*"'```         ?88'                                                                                                                               
+   d8bd8b.d8p d8888b ?88' d888b8b            _.os#$|8*"`   d8P       ?8b  88P                                                                                                                           
+   88P`?P'?P d8b_,dP 88P d8P' ?88       .oaS###S*"`       d8P d8888b $whi?88b 88b                                                                                                                       
+ d88  d8 ?8 88b     88b 88b  ,88b .osS$$$$*" ?88,.d88b, d88 d8P' ?88 88P `?8b                                                                                                                            
+d88' d88b 8b`?8888P'`?8b`?88P'.aS$$$$Q*"`    `?88'  ?88 ?88 88b  d88 d88                                                                                                                               
+                          .a#$$$$$$"`          88b  d8P  88b`?8888P'
+                       ,s$$$$$$$"`             888888P'   88n      _.,,,ass;:
+                    .a$$$$$$$P`               d88P'    .,.ass%#S$$$$$$$$$$$$$$'                                                                                                                        
+                 .a$###$$$P`           _.,,-aqsc#SS$$$$$$$$$$$$$$$$$$$$$$$$$$'                                                                                                                          
+              ,a$$###$$P`  _.,-ass#S$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$####SSSS'
+           .a$$$$$$$$$$SSS$$$$$$$$$$$$$$$$$$$$$$$$$$$$SS##==--""''^^/$$$$$$'
+______________________________________________________________________________                                                                                                                        
+                                                             AL-Hacker.com
+    '''
+]
+
+# Function to create and display random text art
+def generate_text_art(text):
+    random_font = random.choice(fonts)
+    fig = pyfiglet.Figlet(font=random_font)
+    art_text = fig.renderText(text)
+    return art_text
+
+# Function to display a random AL Hacker ASCII image
+def display_random_al_hacker_image():
+    random_image = random.choice(al_hacker_ascii_art)
+    print(random_image)
+
+# Generate and display the text art
+print(generate_text_art(text))
+
+# Display a random AL Hacker image below the text
+display_random_al_hacker_image()
+
+option=print(input("Enter y for ipconfig::"))
 if(option=="y"or"Y"):
     subprocess.call("ipconfig")
 
