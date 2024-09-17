@@ -43,7 +43,7 @@ xMMMMMMMMMd                        ,0MMMMMMMMMMK;
          88~~~~~ 88    88 88~~~~~ 88 V8o88    88       88    
          88.     88b  d88 88.     88  V888   .88.      88    
          Y88888P ~Y8888P' Y88888P VP   V8P Y888888P    YP    
-                Metasploit by Rapid7     
+                Agentless Hacker by Rapid7     
     ''',
     # Skull ASCII Art
     r'''
