@@ -1,4 +1,5 @@
 import wmi
+import socket
 import psutil
 import platform
 from datetime import datetime
@@ -6,6 +7,8 @@ import subprocess
 import winreg
 import pdfkit
 from scapy.all import sr1, IP, ICMP, TCP
+import ctypes
+import sys
 
 # Initialize WMI object
 c = wmi.WMI()
@@ -34,7 +37,7 @@ def get_network_info():
     network_info = []
     for interface, addrs in psutil.net_if_addrs().items():
         for addr in addrs:
-            if addr.family == psutil.AF_INET:
+            if addr.family == socket.AF_INET:
                 network_info.append({
                     "Interface": interface,
                     "IP Address": addr.address
@@ -77,7 +80,7 @@ def check_vulnerabilities():
     vulnerabilities.extend(check_uac_settings())
     return vulnerabilities
 
-# Function to scan open ports on a host
+# Function to scan open ports on a host (user provides IP)
 def scan_open_ports(target_ip):
     open_ports = []
     for port in range(20, 1025):
@@ -86,7 +89,7 @@ def scan_open_ports(target_ip):
             open_ports.append(port)
     return open_ports
 
-# Function to map connected devices in the local network (simple ping sweep)
+# Function to map connected devices in the local network (user provides subnet)
 def network_topology_scan(subnet):
     devices = []
     for i in range(1, 255):
@@ -137,6 +140,13 @@ def generate_pdf_report(system_info, network_info, vulnerabilities, target_ip, o
     
     # Save HTML to PDF
     pdfkit.from_string(html_content, 'vulnerability_report.pdf')
+
+# Admin check function
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
 
 # Main function with console interface
 def main():
@@ -198,4 +208,8 @@ def main():
         print("\nFull scan complete. Report saved as 'vulnerability_report.pdf'.")
 
 if __name__ == "__main__":
-    main()
+    if is_admin():
+        main()
+    else:
+        print("This script requires administrative privileges. Please run as an Administrator.")
+        sys.exit()
