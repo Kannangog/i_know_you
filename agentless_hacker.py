@@ -1,19 +1,139 @@
-import wmi
-import socket
 import psutil
-import platform
-from datetime import datetime
 import subprocess
-import winreg
-import pdfkit
-from scapy.all import sr1, IP, ICMP, TCP
-import ctypes
+import platform
+import datetime
 import sys
+from scapy.all import sr1, IP, ICMP, TCP
+import os
+import socket
+import random
+import pyfiglet
 
-# Initialize WMI object
-c = wmi.WMI()
+# Text to display
+text = "Agentless Hacker"
 
-# Function to gather basic system information
+# All ASCII art and text from the Metasploit theme, Rabbit, Skull, and "I love you" designs
+ascii_art_list = [
+    # AL Hacker 2
+    r'''
+               .;lxO0KXXXK0Oxl:.
+           ,o0WMMMMMMMMMMMMMMMMMMKd,
+        'xNMMMMMMMMMMMMMMMMMMMMMMMMMWx,
+      :KMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMK:
+    .KMMMMMMMMMMMMMMMWNNNWMMMMMMMMMMMMMMMX,
+   lWMMMMMMMMMMMXd:..     ..;dKMMMMMMMMMMMMo
+  xMMMMMMMMMMWd.               .oNMMMMMMMMMMk
+ oMMMMMMMMMMx.                    dMMMMMMMMMMx
+.WMMMMMMMMM:                       :MMMMMMMMMM,
+xMMMMMMMMMo                         lMMMMMMMMMO
+NMMMMMMMMW                    ,cccccoMMMMMMMMMWlccccc;
+MMMMMMMMMX                     ;KMMMMMMMMMMMMMMMMMMX:
+NMMMMMMMMW.                      ;KMMMMMMMMMMMMMMX:
+xMMMMMMMMMd                        ,0MMMMMMMMMMK;
+.WMMMMMMMMMc                         'OMMMMMM0,
+ lMMMMMMMMMMk.                         .kMMO'
+  dMMMMMMMMMMWd'                         ..
+   cWMMMMMMMMMMMNxc'.                ##########
+    .0MMMMMMMMMMMMMMMMWc            #+#    #+#
+      ;0MMMMMMMMMMMMMMMo.          +:+
+        .dNMMMMMMMMMMMMo          +#++:++#+
+           'oOWMMMMMMMMo                +:+
+               .,cdkO0K;        :+:    :+:                                
+                                :::::::+:
+                      AL Hacker
+    ''',
+    # Metasploit ASCII Art
+    r'''
+         d88888b db    db d88888b d8b   db d888888b d888888b 
+         88'     88    88 88'     888o  88   `88'   `~88~' 
+         88ooooo 88    88 88ooooo 88V8o 88    88       88    
+         88~~~~~ 88    88 88~~~~~ 88 V8o88    88       88    
+         88.     88b  d88 88.     88  V888   .88.      88    
+         Y88888P ~Y8888P' Y88888P VP   V8P Y888888P    YP    
+                Agentless Hacker by Rapid7     
+    ''',
+    # Skull ASCII Art
+    r'''
+                      ########                  #
+                      #################            #
+                   ######################         #
+                  #########################      #
+                ############################
+               ##############################
+               ###############################
+              ###############################
+              ##############################
+                              #    ########   #
+                 ##        ###        ####   ##
+                                      ###   ###
+                                    ####   ###
+               ####          ##########   ####
+               #######################   ####
+                 ####################   ####
+                  ##################  ####
+                    ############      ##
+                       ########        ###
+                      #########        #####
+                    ############      ######
+                   ########      #########
+                     #####       ########
+                       ###       #########
+                      ######    ############
+                     #######################
+                     #   #   ###  #   #   ##
+                     ########################
+                      ##     ##   ##     ##
+                            https://Agentless-Hacker.com
+    ''',
+    # Rabbit ASCII Art
+    r'''
+                        (`.         ,-,
+                        ` `.    ,;' /
+                         `.  ,'/ .'
+                          `. X /.'
+                .-;--''--.._` ` (
+              .'            /   `
+             ,           ` '   Q '            ======Agentless Hacker======
+             ,         ,   `._    \
+          ,.|         '     `-.;_'
+           ' `    ,   )   .'
+              `._ ,  '   /_
+                 ; ,''-,;' ``-
+                  `-..__--
+    ''',
+    # I love you ASCII Art
+    r'''
+IIIIII    dTb.dTb        .---.
+  II     4'  v  'B   .'"".'/|\`.""'.
+  II     6.     .P  :  .' / | \ `.  :
+  II     'T;. .;P'  '.'  /  |  \  `.'
+  II      'T; ;P'    `. /   |   \ .'
+IIIIII     'YvP'       `-.|.-'
+
+I love shells --egypt @ Agentless-Hacker
+    '''
+]
+
+# Function to create and display random text art
+def generate_text_art(text):
+    fonts = pyfiglet.FigletFont.getFonts()
+    random_font = random.choice(fonts)
+    fig = pyfiglet.Figlet(font=random_font)
+    art_text = fig.renderText(text)
+    return art_text
+
+# Function to display a random ASCII image
+def display_random_ascii_image():
+    random_image = random.choice(ascii_art_list)
+    print(random_image)
+
+# Generate and display the text art
+print(generate_text_art(text))
+
+# Display a random ASCII image below the text
+display_random_ascii_image()
+
+# Initialize system information
 def get_system_info():
     system_info = {
         "OS": platform.system(),
@@ -24,13 +144,6 @@ def get_system_info():
         "RAM (GB)": round(psutil.virtual_memory().total / (1024 ** 3), 2)
     }
     return system_info
-
-# Function to gather details about installed hotfixes
-def get_hotfixes():
-    hotfixes = []
-    for hotfix in c.Win32_QuickFixEngineering():
-        hotfixes.append(hotfix.Description)
-    return hotfixes
 
 # Function to gather network information
 def get_network_info():
@@ -47,27 +160,18 @@ def get_network_info():
 # Check firewall settings
 def check_firewall_rules():
     firewall_issues = []
-    firewall_rules = subprocess.run(["powershell", "Get-NetFirewallRule"], capture_output=True, text=True)
-    if "Disabled" in firewall_rules.stdout:
-        firewall_issues.append("Some firewall rules are disabled, check security settings.")
+    firewall_rules = subprocess.run(["sudo", "ufw", "status"], capture_output=True, text=True)
+    if "inactive" in firewall_rules.stdout:
+        firewall_issues.append("Firewall is inactive, check security settings.")
     return firewall_issues
 
-# Check Windows Defender settings
-def check_windows_defender():
-    defender_issues = []
-    defender_settings = subprocess.run(["powershell", "Get-MpPreference"], capture_output=True, text=True)
-    if "DisableRealtimeMonitoring : True" in defender_settings.stdout:
-        defender_issues.append("Windows Defender real-time protection is disabled!")
-    return defender_issues
-
-# Check UAC settings from the registry
+# Check UAC settings from the system configuration
 def check_uac_settings():
     uac_issues = []
     try:
-        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", 0, winreg.KEY_READ)
-        value, _ = winreg.QueryValueEx(key, "EnableLUA")
-        if value == 0:
-            uac_issues.append("User Account Control (UAC) is disabled. This can expose the system to vulnerabilities.")
+        uac_status = subprocess.run(["sudo", "getenforce"], capture_output=True, text=True)
+        if "Disabled" in uac_status.stdout:
+            uac_issues.append("SELinux is disabled. This can expose the system to vulnerabilities.")
     except Exception as e:
         uac_issues.append(f"Could not read UAC settings: {str(e)}")
     return uac_issues
@@ -76,7 +180,6 @@ def check_uac_settings():
 def check_vulnerabilities():
     vulnerabilities = []
     vulnerabilities.extend(check_firewall_rules())
-    vulnerabilities.extend(check_windows_defender())
     vulnerabilities.extend(check_uac_settings())
     return vulnerabilities
 
@@ -139,77 +242,82 @@ def generate_pdf_report(system_info, network_info, vulnerabilities, target_ip, o
     html_content += "</ul></body></html>"
     
     # Save HTML to PDF
-    pdfkit.from_string(html_content, 'vulnerability_report.pdf')
+    import pdfkit
+    config = pdfkit.configuration()
+    pdfkit.from_string(html_content, 'vulnerability_report.pdf', configuration=config)
 
 # Admin check function
 def is_admin():
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
+    return os.geteuid() == 0
 
 # Main function with console interface
 def main():
-    print("\nWelcome to the Agent-less Windows Vulnerability and Network Scanner!")
-    print("1. System Vulnerability Check")
-    print("2. Network Open Port Scan")
-    print("3. Network Topology Scan")
-    print("4. Generate Full Report")
-    choice = input("Select an option (1-4): ")
+    while True:
+        print("\nWelcome to the Agent-less Linux Vulnerability and Network Scanner!")
+        print("1. System Vulnerability Check")
+        print("2. Network Open Port Scan")
+        print("3. Network Topology Scan")
+        print("4. Generate Full Report")
+        print("5. Exit")
+        choice = input("Select an option (1-5): ")
 
-    # Gather system information
-    system_info = get_system_info()
-    network_info = get_network_info()
-    vulnerabilities = []
-    open_ports = []
-    network_devices = []
-    target_ip = ""
+        if choice == '5':
+            print("Exiting the program. Goodbye!")
+            break
 
-    if choice == '1':
-        print("\nRunning System Vulnerability Check...\n")
-        vulnerabilities = check_vulnerabilities()
-        if vulnerabilities:
-            for vuln in vulnerabilities:
-                print(f"Vulnerability: {vuln}")
-        else:
-            print("No critical vulnerabilities found!")
-    
-    elif choice == '2':
-        target_ip = input("Enter the target IP address for open port scan: ")
-        print(f"\nScanning open ports on {target_ip}...\n")
-        open_ports = scan_open_ports(target_ip)
-        if open_ports:
-            for port in open_ports:
-                print(f"Port {port} is open.")
-        else:
-            print(f"No open ports found on {target_ip}.")
+        # Gather system information
+        system_info = get_system_info()
+        network_info = get_network_info()
+        vulnerabilities = []
+        open_ports = []
+        network_devices = []
+        target_ip = ""
 
-    elif choice == '3':
-        subnet = input("Enter the subnet (e.g., 192.168.1): ")
-        print(f"\nScanning devices on subnet {subnet}...\n")
-        network_devices = network_topology_scan(subnet)
-        if network_devices:
-            for device in network_devices:
-                print(f"Device found: {device}")
-        else:
-            print(f"No devices found on subnet {subnet}.")
-
-    elif choice == '4':
-        target_ip = input("Enter the target IP address for full scan: ")
-        print(f"\nRunning full scan on {target_ip}...\n")
+        if choice == '1':
+            print("\nRunning System Vulnerability Check...\n")
+            vulnerabilities = check_vulnerabilities()
+            if vulnerabilities:
+                for vuln in vulnerabilities:
+                    print(f"Vulnerability: {vuln}")
+            else:
+                print("No critical vulnerabilities found!")
         
-        vulnerabilities = check_vulnerabilities()
-        open_ports = scan_open_ports(target_ip)
-        subnet = '.'.join(target_ip.split('.')[:-1])  # Assuming IP is in /24 subnet
-        network_devices = network_topology_scan(subnet)
-        
-        # Generate PDF report
-        generate_pdf_report(system_info, network_info, vulnerabilities, target_ip, open_ports, network_devices)
-        print("\nFull scan complete. Report saved as 'vulnerability_report.pdf'.")
+        elif choice == '2':
+            target_ip = input("Enter the target IP address for open port scan: ")
+            print(f"\nScanning open ports on {target_ip}...\n")
+            open_ports = scan_open_ports(target_ip)
+            if open_ports:
+                for port in open_ports:
+                    print(f"Port {port} is open.")
+            else:
+                print(f"No open ports found on {target_ip}.")
 
-if __name__ == "__main__":
+        elif choice == '3':
+            subnet = input("Enter the subnet (e.g., 192.168.1): ")
+            print(f"\nScanning devices on subnet {subnet}...\n")
+            network_devices = network_topology_scan(subnet)
+            if network_devices:
+                for device in network_devices:
+                    print(f"Device found: {device}")
+            else:
+                print(f"No devices found on subnet {subnet}.")
+
+        elif choice == '4':
+            target_ip = input("Enter the target IP address for full scan: ")
+            print(f"\nRunning full scan on {target_ip}...\n")
+            
+            vulnerabilities = check_vulnerabilities()
+            open_ports = scan_open_ports(target_ip)
+            subnet = '.'.join(target_ip.split('.')[:-1])  # Assuming IP is in /24 subnet
+            network_devices = network_topology_scan(subnet)
+            
+            # Generate PDF report
+            generate_pdf_report(system_info, network_info, vulnerabilities, target_ip, open_ports, network_devices)
+            print("\nFull scan complete. Report saved as 'vulnerability_report.pdf'.")
+
+if _name_ == "_main_":
     if is_admin():
         main()
     else:
-        print("This script requires administrative privileges. Please run as an Administrator.")
-        sys.exit()
+        print("This script requires administrative privileges. Please run as root.")
+  sys.exit()
